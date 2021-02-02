@@ -5,37 +5,31 @@ import java.io.IOException;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Orientation;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.SplitPane;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.stage.Stage;
+import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.Style;
+
 
 /**
  * ViewerFX App
  */
-public class App extends Application {
+public class ViewerFxApplication extends Application {
 
     private static Scene scene;
+	public static JMetro jMetro;
 
     @Override
     public void start(Stage stage) throws IOException {
-    	final SplitPane rootPane = new SplitPane();
-    	final SplitPane main = new SplitPane();
-    	rootPane.setOrientation(Orientation.VERTICAL);
-    	main.setOrientation(Orientation.HORIZONTAL);
+    	new ViewerModel();
+    	Parent root = loadFXML("main");
     	
-    	main.getItems().add(loadFXML("primary"));
-    	main.getItems().add(loadFXML("secondary"));
-    	
-    	rootPane.getItems().add(main);
-    	rootPane.getItems().add(loadFXML("third"));
-    	
-    	rootPane.setOnDragOver(event -> {
+    	root.setOnDragOver(event -> {
             // On drag over if the DragBoard has files
-            if (event.getGestureSource() != rootPane && event.getDragboard().hasFiles()) {
+            if (event.getGestureSource() != root && event.getDragboard().hasFiles()) {
 				// All files on the dragboard must have an accepted extension
                 // Allow for both copying and moving
                 event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
@@ -43,14 +37,15 @@ public class App extends Application {
             event.consume();
         });
     	
-    	rootPane.setOnDragDropped(new EventHandler<DragEvent>() {
+    	root.setOnDragDropped(new EventHandler<DragEvent>() {
 
             @Override
             public void handle(DragEvent event) {
             	boolean success = false;
-                if (event.getGestureSource() != rootPane && event.getDragboard().hasFiles()) {
+                if (event.getGestureSource() != root && event.getDragboard().hasFiles()) {
                     // Print files
                     event.getDragboard().getFiles().forEach(file -> System.out.println(file.getAbsolutePath()));
+                    ViewerModel.getInstance().addFile(event.getDragboard().getFiles());
                     success = true;
                 }
                 event.setDropCompleted(success);
@@ -58,7 +53,9 @@ public class App extends Application {
             }
         });
     	
-        scene = new Scene(rootPane, 640, 480);
+        scene = new Scene(root, 900, 600);
+        jMetro = new JMetro(Style.LIGHT);
+        jMetro.setScene(scene);
         stage.setScene(scene);
         stage.show();
     }
@@ -68,7 +65,7 @@ public class App extends Application {
     }
 
     private static Parent loadFXML(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(ViewerFxApplication.class.getResource(fxml + ".fxml"));
         return fxmlLoader.load();
     }
 
