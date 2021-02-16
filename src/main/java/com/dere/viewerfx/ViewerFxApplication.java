@@ -16,6 +16,11 @@ import jfxtras.styles.jmetro.Style;
 
 /**
  * ViewerFX App
+ * TODO
+ * - Logger
+ * - CDI
+ * - Docking
+ * - Loading custom config
  */
 public class ViewerFxApplication extends Application {
 
@@ -53,7 +58,7 @@ public class ViewerFxApplication extends Application {
             }
         });
     	
-        scene = new Scene(root, 900, 600);
+        scene = new Scene(root, 1024, 768);
         jMetro = new JMetro(Style.LIGHT);
         jMetro.setScene(scene);
         stage.setScene(scene);
