@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+import com.dere.viewerfx.formatter.FormatterFactory;
 import com.dere.viewerfx.parser.IDataFile;
 import com.dere.viewerfx.parser.IDataRecord;
 
@@ -46,6 +47,8 @@ public class MenuController implements Initializable, ListChangeListener<IDataFi
 
 	@FXML
 	private TableView tableView;
+	
+	FormatterFactory formatFactory = new FormatterFactory();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -64,7 +67,7 @@ public class MenuController implements Initializable, ListChangeListener<IDataFi
 			public void onChanged(Change<? extends IDataRecord> c) {
 				IDataRecord selectedItem = (IDataRecord) MenuController.this.tableView.getSelectionModel().getSelectedItem();
 				System.out.println(selectedItem.getColumnValue(0));
-				TextArea value = new TextArea((String) selectedItem.getContent());
+				TextArea value = new TextArea(formatFactory.getFormatter(selectedItem.getContentType()).format(selectedItem.getContent()));
 				value.setWrapText(true);
 				tabPaneDetail.getTabs().get(0).setContent(value);
 			}

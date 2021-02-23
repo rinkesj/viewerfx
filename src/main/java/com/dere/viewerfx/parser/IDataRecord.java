@@ -6,4 +6,5 @@ public interface IDataRecord {
 	Object getColumnValues();
 	Object getColumnValue(String column);
 	Object getColumnValue(int index);
+	String getContentType();
 }

@@ -13,8 +13,8 @@ public class DataRecord implements IDataRecord {
 	}
 
 	@Override
-	public Object getContent() {
-		return columns[columns.length-1];
+	public Object getContent() { // TODO trim and null check
+		return columns[columns.length-1].trim();
 	}
 
 	@Override
@@ -30,5 +30,10 @@ public class DataRecord implements IDataRecord {
 	@Override
 	public String[] getColumnValues() {
 		return columns;
+	}
+
+	@Override
+	public String getContentType() {
+		return columns[0].replace("SERVICE_", "").toLowerCase(); // TODO this is far away from ideal
 	}
 }
