@@ -7,9 +7,10 @@ public class MainTest {
 	@Test
 	public void runWithData() {
 
-		String file1 = getClass().getClassLoader().getResource("delimiter_file.csv").getPath();
+		String file1 = getClass().getClassLoader().getResource("delimiter_file1.csv").getPath();
+		String file2 = getClass().getClassLoader().getResource("delimiter_file2.csv").getPath();
 
-		String[] args = new String[] { file1, file1, file1 };
+		String[] args = new String[] { file1, file2 };
 		System.setProperty("log4j.configurationFile", "log4j-test.xml");
 		ViewerFxApplication.main(args);
 	}

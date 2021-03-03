@@ -7,4 +7,8 @@ public interface IDataRecord {
 	Object getColumnValue(String column);
 	Object getColumnValue(int index);
 	String getContentType();
+	IDataFile getDataFile();
+	void setDataFile(IDataFile dataFile);
+	int getStartIndex();
+	int getEndIndex();
 }

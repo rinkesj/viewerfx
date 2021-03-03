@@ -1,11 +1,9 @@
 package com.dere.viewerfx;
 
-import java.awt.print.Book;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -16,12 +14,11 @@ import com.dere.viewerfx.parser.IDataFile;
 import com.dere.viewerfx.parser.IDataRecord;
 
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
@@ -31,6 +28,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
 import jfxtras.styles.jmetro.Style;
 
@@ -70,6 +69,20 @@ public class MenuController implements Initializable, ListChangeListener<IDataFi
 				TextArea value = new TextArea(formatFactory.getFormatter(selectedItem.getContentType()).format(selectedItem.getContent()));
 				value.setWrapText(true);
 				tabPaneDetail.getTabs().get(0).setContent(value);
+				
+				//TODO i am ugly
+				Tab obj = fileTabs.getTabs().stream().filter(t -> t.getId().equalsIgnoreCase(selectedItem.getDataFile().getFile().getAbsolutePath())).findFirst().get();
+				fileTabs.getSelectionModel().select(obj);
+				
+				
+				TextArea content = (TextArea) obj.getContent();
+				int start = content.getText().indexOf((String) selectedItem.getContent());
+				int end = start + ((String)selectedItem.getContent()).length();
+				System.out.println("start" + start);
+				System.out.println("end" + end);
+				System.out.println(selectedItem.getStartIndex());
+				System.out.println(selectedItem.getEndIndex());
+				content.selectRange(selectedItem.getStartIndex(), selectedItem.getEndIndex());
 			}
 			
 		});
@@ -97,6 +110,7 @@ public class MenuController implements Initializable, ListChangeListener<IDataFi
 
 	private Tab createTab(File file) {
 		Tab tab = new Tab(file.getName());
+		tab.setId(file.getAbsolutePath());
 		String content = "";
 		try {
 			content = Files.readString(file.toPath());
@@ -104,7 +118,44 @@ public class MenuController implements Initializable, ListChangeListener<IDataFi
 			e.printStackTrace();
 		}
 		TextArea value = new TextArea(content);
-		value.setWrapText(true);
+		value.setOnMouseClicked(evt -> {
+		    if (evt.getButton() == MouseButton.PRIMARY) {
+
+		        // check, if click was inside the content area
+		        Node n = evt.getPickResult().getIntersectedNode();
+		        while (n != value) {
+		            if (n.getStyleClass().contains("content")) {
+		                // find previous/next line break
+		            	
+		            	//this is crap - we read file with cords. lets use it to detect caretPosition
+		                int caretPosition = value.getCaretPosition();
+		                String text = value.getText();
+		                int lineBreak1 = text.lastIndexOf(System.lineSeparator(), caretPosition-1);
+		                int lineBreak2 = text.indexOf(System.lineSeparator(), caretPosition);
+		                if (lineBreak2 < 0) {
+		                    // if no more line breaks are found, select to end of text
+		                    lineBreak2 = text.length();
+		                }
+		                int start = lineBreak1 + 1;
+		                int end = lineBreak2+1;
+		                System.out.println("FileTab select " + (lineBreak1+1) + " x " + (lineBreak2+1));
+		                IDataRecord record = ViewerModel.getInstance().getRecords().stream().filter(r->r.getDataFile().getFile().getAbsolutePath().equalsIgnoreCase(tab.getId())).filter(r->(r.getStartIndex() == start && r.getEndIndex() == end)).findFirst().get();
+		                System.out.println(record);
+		                
+		                // when filetab line is selected then preselected table line should also change detail view - doesnt work
+		                MenuController.this.tableView.getSelectionModel().select(record);
+		                
+//						((TextArea)((AnchorPane)tabPaneDetail.getTabs().get(0).getContent()).getChildren().get(0)).setText(formatFactory.getFormatter(record.getContentType()).format(record.getContent()));;
+		                
+		                value.selectRange(lineBreak1, lineBreak2);
+		                evt.consume();
+		                break;
+		            }
+		            n = n.getParent();
+		        }
+		    }
+		});
+//		value.setWrapText(true);
 		tab.setContent(value);
 		return tab;
 	}

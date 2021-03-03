@@ -19,6 +19,7 @@ public class DataFile implements IDataFile {
 	public DataFile(File file, List<IDataRecord> records) {
 		this.file = file;
 		this.records = records;
+		records.stream().forEach(r -> r.setDataFile(this));
 	}
 
 	@Override

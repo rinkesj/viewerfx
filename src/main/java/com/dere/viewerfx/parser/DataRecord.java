@@ -3,9 +3,19 @@ package com.dere.viewerfx.parser;
 public class DataRecord implements IDataRecord {
 	
 	private String[] columns;
-
-	public DataRecord(String[] columns) {
+	private IDataFile dataFile;
+	private int start;
+	private int end;
+	
+	public DataRecord(String[] columns, int start, int end) {
 		this.columns = columns;
+		this.start = start;
+		this.end = end;
+	}
+	
+	public DataRecord(String[] columns, IDataFile dataFile) {
+		this.columns = columns;
+		this.dataFile = dataFile;
 	}
 	
 	public String[] getColumns() {
@@ -35,5 +45,25 @@ public class DataRecord implements IDataRecord {
 	@Override
 	public String getContentType() {
 		return columns[0].replace("SERVICE_", "").toLowerCase(); // TODO this is far away from ideal
+	}
+
+	@Override
+	public IDataFile getDataFile() {
+		return dataFile;
+	}
+	
+	@Override
+	public void setDataFile(IDataFile dataFile) {
+		this.dataFile = dataFile;
+	}
+
+	@Override
+	public int getStartIndex() {
+		return start;
+	}
+
+	@Override
+	public int getEndIndex() {
+		return end;
 	}
 }

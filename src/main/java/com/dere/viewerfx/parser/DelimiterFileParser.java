@@ -14,10 +14,14 @@ public class DelimiterFileParser implements IDataFileParser {
 		try {
 			List<String> readAllLines = Files.readAllLines(file.toPath());
 			
+			int start = 0;
+			int end = 0;
 			for (String line : readAllLines) {
+				end = start + line.length() + System.lineSeparator().length();
 				String[] split = line.split(";");
-				DataRecord record = new DataRecord(split);
+				DataRecord record = new DataRecord(split, start, end);
 				records.add(record);
+				start = end;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
