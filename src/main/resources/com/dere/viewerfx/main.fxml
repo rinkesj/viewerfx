@@ -71,18 +71,26 @@
          <items>
           <SplitPane dividerPositions="0.65" focusTraversable="true">
             <items>
-              <ScrollPane fitToHeight="false" fitToWidth="false" SplitPane.resizableWithParent="false">
-                <content>
-                        <AnchorPane>
+                  <VBox>
+                     <children>
+                        <AnchorPane VBox.vgrow="ALWAYS">
                            <children>
-                                    <TableView fx:id="tableView" minHeight="450.0" minWidth="900.0" AnchorPane.bottomAnchor="-10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="89.0" AnchorPane.topAnchor="0.0">
-                                      <columns>
-                                </columns>
-                                    </TableView>
+                              <HBox AnchorPane.bottomAnchor="-0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <AnchorPane HBox.hgrow="ALWAYS">
+                                       <children>
+                                                <TableView fx:id="tableView" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.0" AnchorPane.topAnchor="0.0">
+                                                  <columns>
+                                					</columns>
+                                                </TableView>
+                                       </children>
+                                    </AnchorPane>
+                                 </children>
+                              </HBox>
                            </children>
                         </AnchorPane>
-                </content>
-              </ScrollPane>
+                     </children>
+                  </VBox>
                   <ScrollPane fitToHeight="true" fitToWidth="true">
                      <content>
                     <AnchorPane>
