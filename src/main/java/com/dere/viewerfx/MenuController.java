@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 import com.dere.viewerfx.formatter.FormatterFactory;
 import com.dere.viewerfx.parser.IDataFile;
 import com.dere.viewerfx.parser.IDataRecord;
+import com.dere.viewerfx.view.ContentViewFactory;
+import com.dere.viewerfx.view.IContentView;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ListChangeListener;
@@ -48,6 +50,8 @@ public class MenuController implements Initializable, ListChangeListener<IDataFi
 	private TableView tableView;
 	
 	FormatterFactory formatFactory = new FormatterFactory();
+	
+	ContentViewFactory viewFactory = new ContentViewFactory();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -64,11 +68,30 @@ public class MenuController implements Initializable, ListChangeListener<IDataFi
 
 			@Override
 			public void onChanged(Change<? extends IDataRecord> c) {
+				
+				if(tabPaneDetail.getTabs().size() ==  3) {
+					tabPaneDetail.getTabs().remove(0); // remove custom view - FIX ME i am ugly
+				}
+				
 				IDataRecord selectedItem = (IDataRecord) MenuController.this.tableView.getSelectionModel().getSelectedItem();
-				System.out.println(selectedItem.getColumnValue(0));
-				TextArea value = new TextArea(formatFactory.getFormatter(selectedItem.getContentType()).format(selectedItem.getContent()));
-				value.setWrapText(true);
-				tabPaneDetail.getTabs().get(0).setContent(value);
+				TextArea formated = new TextArea(formatFactory.getFormatter(selectedItem.getContentType()).format(selectedItem.getContent()));
+				formated.setWrapText(true);
+				
+				TextArea source = new TextArea(selectedItem.getContent().toString());
+				source.setWrapText(true);
+				tabPaneDetail.getTabs().get(0).setContent(formated); // would be wise to use IDs
+				tabPaneDetail.getTabs().get(1).setContent(source); // would be wise to use IDs
+				
+				IContentView view = viewFactory.getFormatter(selectedItem.getContentType());
+				if(view != null) {
+					Node node = view.getNode(selectedItem);
+					if(node != null) {
+						Tab customViewTab = new Tab(selectedItem.getContentType());
+						customViewTab.setContent(node);
+						tabPaneDetail.getTabs().add(0, customViewTab);
+						tabPaneDetail.getSelectionModel().select(0);
+					}
+				}
 				
 				//TODO i am ugly
 				Tab obj = fileTabs.getTabs().stream().filter(t -> t.getId().equalsIgnoreCase(selectedItem.getDataFile().getFile().getAbsolutePath())).findFirst().get();
@@ -78,11 +101,7 @@ public class MenuController implements Initializable, ListChangeListener<IDataFi
 				TextArea content = (TextArea) obj.getContent();
 				int start = content.getText().indexOf((String) selectedItem.getContent());
 				int end = start + ((String)selectedItem.getContent()).length();
-				System.out.println("start" + start);
-				System.out.println("end" + end);
-				System.out.println(selectedItem.getStartIndex());
-				System.out.println(selectedItem.getEndIndex());
-				content.selectRange(selectedItem.getStartIndex(), selectedItem.getEndIndex());
+				content.selectRange(selectedItem.getEndIndex(),selectedItem.getStartIndex()); // select from end to start to keep- caret on start of line to avoid jump on end
 			}
 			
 		});
@@ -147,7 +166,7 @@ public class MenuController implements Initializable, ListChangeListener<IDataFi
 		                
 //						((TextArea)((AnchorPane)tabPaneDetail.getTabs().get(0).getContent()).getChildren().get(0)).setText(formatFactory.getFormatter(record.getContentType()).format(record.getContent()));;
 		                
-		                value.selectRange(lineBreak1, lineBreak2);
+		                value.selectRange(lineBreak2, lineBreak1); // select from end to start to keep- caret on start of line to avoid jump on end
 		                evt.consume();
 		                break;
 		            }

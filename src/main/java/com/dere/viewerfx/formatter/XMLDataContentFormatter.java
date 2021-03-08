@@ -32,7 +32,6 @@ public class XMLDataContentFormatter implements IDataContentFormatter {
 			transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes");
 			transformer.transform(xmlInput, xmlOutput);
 			String xmlFormatted = xmlOutput.getWriter().toString();
-			System.out.println(xmlFormatted);
 			return xmlFormatted;
 		} catch (Exception e) {
 			throw new RuntimeException(e); // simple exception handling, please review it
