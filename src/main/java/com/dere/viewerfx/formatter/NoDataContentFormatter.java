@@ -1,5 +1,7 @@
 package com.dere.viewerfx.formatter;
 
+import com.dere.viewerfx.api.IDataContentFormatter;
+
 public class NoDataContentFormatter implements IDataContentFormatter {
 
 	@Override

@@ -1,6 +1,4 @@
-package com.dere.viewerfx.view;
-
-import com.dere.viewerfx.parser.IDataRecord;
+package com.dere.viewerfx.api;
 
 import javafx.scene.Node;
 

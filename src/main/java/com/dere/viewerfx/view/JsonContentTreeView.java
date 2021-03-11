@@ -2,7 +2,10 @@ package com.dere.viewerfx.view;
 
 import java.util.Map;
 
-import com.dere.viewerfx.parser.IDataRecord;
+import javax.enterprise.context.ApplicationScoped;
+
+import com.dere.viewerfx.api.IContentView;
+import com.dere.viewerfx.api.IDataRecord;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -13,6 +16,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 
+@ApplicationScoped
 public class JsonContentTreeView implements IContentView {
 
 	private static final boolean EXPANDED = true;

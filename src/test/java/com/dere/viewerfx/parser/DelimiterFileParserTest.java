@@ -8,6 +8,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import com.dere.viewerfx.api.IDataFile;
+import com.dere.viewerfx.api.IDataRecord;
+
 public class DelimiterFileParserTest {
 
 	DelimiterFileParser parser = new DelimiterFileParser();

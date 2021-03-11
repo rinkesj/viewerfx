@@ -3,6 +3,7 @@ package com.dere.viewerfx.view;
 import java.io.IOException;
 import java.io.StringReader;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -13,12 +14,14 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.dere.viewerfx.parser.IDataRecord;
+import com.dere.viewerfx.api.IContentView;
+import com.dere.viewerfx.api.IDataRecord;
 
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 
+@ApplicationScoped
 public class XmlContentTreeView implements IContentView {
 	
 	private boolean compactMode = false;

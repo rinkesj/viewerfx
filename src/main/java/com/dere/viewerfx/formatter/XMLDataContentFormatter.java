@@ -10,6 +10,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import com.dere.viewerfx.api.IDataContentFormatter;
+
 // TODO this is maybe not ideal as it has to be valid xml somehow and it is parsed. Need better formatter.
 public class XMLDataContentFormatter implements IDataContentFormatter {
 

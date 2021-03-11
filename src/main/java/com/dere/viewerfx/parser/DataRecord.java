@@ -1,5 +1,8 @@
 package com.dere.viewerfx.parser;
 
+import com.dere.viewerfx.api.IDataFile;
+import com.dere.viewerfx.api.IDataRecord;
+
 public class DataRecord implements IDataRecord {
 	
 	private String[] columns;

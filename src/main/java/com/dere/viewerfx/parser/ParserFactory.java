@@ -1,4 +1,4 @@
-package com.dere.viewerfx.view;
+package com.dere.viewerfx.parser;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -9,21 +9,21 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import com.dere.viewerfx.api.IContentView;
+import com.dere.viewerfx.api.IDataFileParser;
 
 @ApplicationScoped
-public class ContentViewFactory {
+public class ParserFactory {
 	
 	@Inject
-	private Instance<IContentView> viewPlugins;
-	private Map<String, IContentView> cache;
+	private Instance<IDataFileParser> viewPlugins;
+	private Map<String, IDataFileParser> cache;
 	
 	@PostConstruct
 	private void buildCache(){
-		cache = viewPlugins.stream().collect(Collectors.toMap(IContentView::type,Function.identity()));
+		cache = viewPlugins.stream().collect(Collectors.toMap(IDataFileParser::type,Function.identity()));
 	}
 
-	public IContentView getByType(String type) {
+	public IDataFileParser getByType(String type) {
 		return cache.get(type);
 	}
 

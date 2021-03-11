@@ -15,6 +15,10 @@ Java FX Viewer
 
 # Features
 * drag and drop file into app will load the file
+* CDI for plugin mechanism - I don't like discover via classpath
+     * discover custom view per record type
+     * discover custom formatters per record type
+     * discover custom parsers
 * parsers
      * delimiter file like CSV
 * formatters
@@ -22,19 +26,19 @@ Java FX Viewer
      * json formatter 
 * views
     * xml tree view with/out compact mode
+    * tree view for json file
 
 # TODO
 * tool data model need rework
 * time to onboard some design patterns
-* CDI for plugin mechanism - I don't like discover via classpath
-     * discover custom view per record type
-     * discover custom formatters per record type
-     * discover custom parsers
+* CDI for plugin mechanism from other libs
+     * events
+     * producers
 * configuration
     * general for tool
     * possibility load plugin config
 * select event - select anything in any view should propagate and select in other view - tricky one
-    * looks like work for javafx events
+    * looks like work for javafx events or CDI events
 * search and mark interested records
 * table view
      * show/hide columns in table
@@ -43,7 +47,7 @@ Java FX Viewer
 * formatters
      * nothing planned except make them more effecient
 * views
-     * tree view for json file
+     * general map view as key value 
 * parsers
      * regex based parser
      * log4j format parser

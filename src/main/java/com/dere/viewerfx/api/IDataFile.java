@@ -1,4 +1,4 @@
-package com.dere.viewerfx.parser;
+package com.dere.viewerfx.api;
 
 import java.io.File;
 import java.util.List;

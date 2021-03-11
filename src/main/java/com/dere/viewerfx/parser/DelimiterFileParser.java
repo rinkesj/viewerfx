@@ -6,6 +6,13 @@ import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.dere.viewerfx.api.IDataFile;
+import com.dere.viewerfx.api.IDataFileParser;
+import com.dere.viewerfx.api.IDataRecord;
+
+/**
+ * TODO add configurable delimiter character per record type
+ */
 public class DelimiterFileParser implements IDataFileParser {
 	
 	@Override
@@ -28,5 +35,10 @@ public class DelimiterFileParser implements IDataFileParser {
 		}
 		
 		return new DataFile(file, records);
+	}
+
+	@Override
+	public String type() {
+		return "delimiter";
 	} 
 }

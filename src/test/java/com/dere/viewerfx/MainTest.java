@@ -12,7 +12,7 @@ public class MainTest {
 
 		String[] args = new String[] { file1, file2 };
 		System.setProperty("log4j.configurationFile", "log4j-test.xml");
-		ViewerFxApplication.main(args);
+		ViewerFXStartup.main(args);
 	}
 
 }

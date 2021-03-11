@@ -3,6 +3,9 @@ package com.dere.viewerfx.parser;
 import java.io.File;
 import java.util.List;
 
+import com.dere.viewerfx.api.IDataFile;
+import com.dere.viewerfx.api.IDataRecord;
+
 public class DataFile implements IDataFile {
 	
 	private List<IDataRecord> records;

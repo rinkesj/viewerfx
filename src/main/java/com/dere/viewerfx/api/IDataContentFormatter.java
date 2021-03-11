@@ -1,4 +1,4 @@
-package com.dere.viewerfx.formatter;
+package com.dere.viewerfx.api;
 
 public interface IDataContentFormatter {
 

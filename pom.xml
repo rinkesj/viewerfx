@@ -27,6 +27,12 @@
 			<artifactId>jmetro</artifactId>
 			<version>11.6.12</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.jboss.weld.se</groupId>
+			<artifactId>weld-se-core</artifactId>
+			<version>3.0.1.Final</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>

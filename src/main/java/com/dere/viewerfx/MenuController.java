@@ -9,11 +9,14 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
+import com.dere.viewerfx.api.IContentView;
+import com.dere.viewerfx.api.IDataFile;
+import com.dere.viewerfx.api.IDataRecord;
+import com.dere.viewerfx.cdi.model.ViewerModel;
 import com.dere.viewerfx.formatter.FormatterFactory;
-import com.dere.viewerfx.parser.IDataFile;
-import com.dere.viewerfx.parser.IDataRecord;
 import com.dere.viewerfx.view.ContentViewFactory;
-import com.dere.viewerfx.view.IContentView;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ListChangeListener;
@@ -31,7 +34,6 @@ import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
 import jfxtras.styles.jmetro.Style;
 
@@ -49,20 +51,25 @@ public class MenuController implements Initializable, ListChangeListener<IDataFi
 	@FXML
 	private TableView tableView;
 	
-	FormatterFactory formatFactory = new FormatterFactory();
+	@Inject
+	private FormatterFactory formatFactory;
 	
-	ContentViewFactory viewFactory = new ContentViewFactory();
-
+	@Inject
+	private ContentViewFactory viewFactory;
+	
+	@Inject
+	private ViewerModel model;
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
-		List<IDataFile> files = ViewerModel.getInstance().getFiles();
+		
+		List<IDataFile> files = model.getFiles();
 		for (IDataFile file : files) {
 			fileTabs.getTabs().add(createTab(file.getFile()));
 		}
 
 		tableView.getColumns().addAll(createColumn());
-		tableView.setItems(ViewerModel.getInstance().getRecords());
+		tableView.setItems(model.getRecords());
 		tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		tableView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<IDataRecord>() {
 
@@ -74,7 +81,7 @@ public class MenuController implements Initializable, ListChangeListener<IDataFi
 				}
 				
 				IDataRecord selectedItem = (IDataRecord) MenuController.this.tableView.getSelectionModel().getSelectedItem();
-				TextArea formated = new TextArea(formatFactory.getFormatter(selectedItem.getContentType()).format(selectedItem.getContent()));
+				TextArea formated = new TextArea(formatFactory.getByType(selectedItem.getContentType()).format(selectedItem.getContent()));
 				formated.setWrapText(true);
 				
 				TextArea source = new TextArea(selectedItem.getContent().toString());
@@ -82,7 +89,7 @@ public class MenuController implements Initializable, ListChangeListener<IDataFi
 				tabPaneDetail.getTabs().get(0).setContent(formated); // would be wise to use IDs
 				tabPaneDetail.getTabs().get(1).setContent(source); // would be wise to use IDs
 				
-				IContentView view = viewFactory.getFormatter(selectedItem.getContentType());
+				IContentView view = viewFactory.getByType(selectedItem.getContentType());
 				if(view != null) {
 					Node node = view.getNode(selectedItem);
 					if(node != null) {
@@ -105,12 +112,12 @@ public class MenuController implements Initializable, ListChangeListener<IDataFi
 			}
 			
 		});
-		ViewerModel.getInstance().registerListener(this);
+		model.registerListener(this);
 	}
 	
 	private Collection createColumn() {
 
-		List<TableColumn> viewColumns = ViewerModel.getInstance().getViewColumns().stream().map(s -> new TableColumn(s))
+		List<TableColumn> viewColumns = model.getViewColumns().stream().map(s -> new TableColumn(s))
 				.collect(Collectors.toList());
 
 		for (TableColumn tableColumn : viewColumns) {
@@ -157,9 +164,7 @@ public class MenuController implements Initializable, ListChangeListener<IDataFi
 		                }
 		                int start = lineBreak1 + 1;
 		                int end = lineBreak2+1;
-		                System.out.println("FileTab select " + (lineBreak1+1) + " x " + (lineBreak2+1));
-		                IDataRecord record = ViewerModel.getInstance().getRecords().stream().filter(r->r.getDataFile().getFile().getAbsolutePath().equalsIgnoreCase(tab.getId())).filter(r->(r.getStartIndex() == start && r.getEndIndex() == end)).findFirst().get();
-		                System.out.println(record);
+		                IDataRecord record = model.getRecords().stream().filter(r->r.getDataFile().getFile().getAbsolutePath().equalsIgnoreCase(tab.getId())).filter(r->(r.getStartIndex() == start && r.getEndIndex() == end)).findFirst().get();
 		                
 		                // when filetab line is selected then preselected table line should also change detail view - doesnt work
 		                MenuController.this.tableView.getSelectionModel().select(record);

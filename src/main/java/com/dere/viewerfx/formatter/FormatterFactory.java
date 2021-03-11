@@ -1,16 +1,29 @@
 package com.dere.viewerfx.formatter;
 
-public class FormatterFactory {
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-	public IDataContentFormatter getFormatter(String type) {
-		// TODO add auto discovery via CDI from classpath
-		switch (type) {
-		case "json":
-			return new JSONDataContentFormatter();
-		case "xml":
-			return new XMLDataContentFormatter();
-		default:
-			return new NoDataContentFormatter();
-		}
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
+import com.dere.viewerfx.api.IDataContentFormatter;
+
+@ApplicationScoped
+public class FormatterFactory {
+	
+	@Inject
+	private Instance<IDataContentFormatter> viewPlugins;
+	private Map<String, IDataContentFormatter> cache;
+	
+	@PostConstruct
+	private void buildCache(){
+		cache = viewPlugins.stream().collect(Collectors.toMap(IDataContentFormatter::type,Function.identity()));
+	}
+
+	public IDataContentFormatter getByType(String type) {
+		return cache.getOrDefault(type, new NoDataContentFormatter());
 	}
 }

@@ -1,41 +1,49 @@
 package com.dere.viewerfx;
 
-import java.io.File;
 import java.io.IOException;
+
+import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.dere.viewerfx.log.ViewerFxLogMessages;
+import com.dere.viewerfx.cdi.model.ViewerModel;
 
-import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 
 /**
- * ViewerFX App TODO - Logger - CDI - Docking - Loading custom config
+ * ViewerFX App
  */
-public class ViewerFxApplication extends Application {
+public class ViewerFxApplication {
+
+	@Inject
+	private FXMLLoader fxmlLoader;
+
+	@Inject
+	private ViewerModel model;
 
 	private static final Logger LOGGER = LogManager.getLogger(ViewerFxApplication.class.getSimpleName());
 
+	StackPane root = new StackPane();
 	private static Scene scene;
 	public static JMetro jMetro;
 
-	@Override
 	public void start(Stage stage) throws IOException {
-		Parent root = loadFXML("main");
 
-		root.setOnDragOver(event -> {
+		Parent main = loadFXML("main");
+
+		main.setOnDragOver(event -> {
 			// On drag over if the DragBoard has files
-			if (event.getGestureSource() != root && event.getDragboard().hasFiles()) {
+			if (event.getGestureSource() != main && event.getDragboard().hasFiles()) {
 				// All files on the dragboard must have an accepted extension
 				// Allow for both copying and moving
 				event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
@@ -43,15 +51,15 @@ public class ViewerFxApplication extends Application {
 			event.consume();
 		});
 
-		root.setOnDragDropped(new EventHandler<DragEvent>() {
+		main.setOnDragDropped(new EventHandler<DragEvent>() {
 
 			@Override
 			public void handle(DragEvent event) {
 				boolean success = false;
-				if (event.getGestureSource() != root && event.getDragboard().hasFiles()) {
+				if (event.getGestureSource() != main && event.getDragboard().hasFiles()) {
 					// Print files
 					event.getDragboard().getFiles().forEach(file -> System.out.println(file.getAbsolutePath()));
-					ViewerModel.getInstance().addFile(event.getDragboard().getFiles());
+					model.addFile(event.getDragboard().getFiles());
 					success = true;
 				}
 				event.setDropCompleted(success);
@@ -59,39 +67,16 @@ public class ViewerFxApplication extends Application {
 			}
 		});
 
-		scene = new Scene(root, 1024, 768);
-		jMetro = new JMetro(Style.LIGHT);
+		root.getChildren().add(main);
+		scene = new Scene(root, 1024, 768); // TODO config
+		jMetro = new JMetro(Style.LIGHT); // TODO config
 		jMetro.setScene(scene);
 		stage.setScene(scene);
 		stage.show();
 	}
 
-	static void setRoot(String fxml) throws IOException {
-		scene.setRoot(loadFXML(fxml));
-	}
-
-	private static Parent loadFXML(String fxml) throws IOException {
-		FXMLLoader fxmlLoader = new FXMLLoader(ViewerFxApplication.class.getResource(fxml + ".fxml"));
-		return fxmlLoader.load();
-	}
-
-	public static void main(String[] args) {
-
-		new ViewerModel();
-
-		LOGGER.info("LAUNCH");
-
-		for (String inputFilePath : args) {
-			File inputFile = new File(inputFilePath);
-			if (inputFile.exists() && inputFile.isFile()) {
-				ViewerModel.getInstance().addFile(inputFile);
-				LOGGER.warn(ViewerFxLogMessages.INPUT_FILE_ADDED.log(inputFilePath));
-			} else {
-				LOGGER.info(ViewerFxLogMessages.INPUT_FILE_FAILED.log(inputFilePath));
-			}
-		}
-
-		launch();
+	private Parent loadFXML(String fxml) throws IOException {
+		return fxmlLoader.load(getClass().getResourceAsStream("./" + fxml + ".fxml"));
 	}
 
 }
