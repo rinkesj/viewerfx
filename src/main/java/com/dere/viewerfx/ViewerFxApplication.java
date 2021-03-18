@@ -38,7 +38,7 @@ public class ViewerFxApplication {
 	public static JMetro jMetro;
 
 	public void start(Stage stage) throws IOException {
-
+		System.out.println("LOAD");
 		Parent main = loadFXML("main");
 
 		main.setOnDragOver(event -> {
@@ -76,7 +76,8 @@ public class ViewerFxApplication {
 	}
 
 	private Parent loadFXML(String fxml) throws IOException {
-		return fxmlLoader.load(getClass().getResourceAsStream("./" + fxml + ".fxml"));
+		fxmlLoader.setLocation(getClass().getResource("./" + fxml + ".fxml"));
+		return fxmlLoader.load();
 	}
 
 }
